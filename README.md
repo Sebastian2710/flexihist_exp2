@@ -1,6 +1,6 @@
 # FlexiHist
 
-**FlexiHis** is a software-driven configurable FPGA histogram module that allows assembling various types of buckets. Using a software histogram composer, it automates the design space exploration and is particularly useful in determining how many buckets of what type should result in the most suitable histogram configuration for a specific data distribution.
+**FlexiHist** is a software-driven configurable FPGA histogram module that allows assembling various types of buckets. Using a software histogram composer, it automates the design space exploration and is particularly useful in determining how many buckets of what type should result in the most suitable histogram configuration for a specific data distribution.
 
 ## Pre-requisites
 - Xilinx Vivado 2022.1 or higher
