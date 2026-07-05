@@ -862,8 +862,8 @@ def construct_candidates(data, ground_truth_histo, resource_budget, num_buckets,
     candidate_buckets = []
 
     for bucket_type in bucket_types:
-      # if high - low < 50 and bucket_type == FineGrainedBucket or high - low < 50 and bucket_type == CoarseGrainedCountingBloomBucket:
-      #   continue
+      if high - low < 50 and bucket_type == FineGrainedBucket or high - low < 50 and bucket_type == CoarseGrainedCountingBloomBucket:
+        continue
 
       for size in sizes:
         bucket = bucket_type.create_default_bucket(size)
@@ -1549,25 +1549,26 @@ def run_all_parallel2(data_path, outputs_path, resource_budget, max_num_buckets,
         for result in results:
             file.write(','.join(map(str, result)) + '\n')
 
-with open("config.yaml", "r") as f:
-    cfg = yaml.safe_load(f)
+if __name__ == "__main__":
+    with open("config.yaml", "r") as f:
+        cfg = yaml.safe_load(f)
 
-data_file = cfg["data_path"]
-platform = cfg["platform"]
-outputs_file = cfg.get("outputs_path", "./Outputs/results.csv")
-budgets = cfg["budgets"]
+    data_file = cfg["data_path"]
+    platform = cfg["platform"]
+    outputs_file = cfg.get("outputs_path", "./Outputs/results.csv")
+    budgets = cfg["budgets"]
 
-# Rice rule for determining the optimal number of buckets in a histogram
-n = len(read_csv_file(data_file))
-k = math.ceil(2 * (n ** (1 / 3)))
-print(f"k = {k}")
+    # Rice rule for determining the optimal number of buckets in a histogram
+    n = len(read_csv_file(data_file))
+    k = math.ceil(2 * (n ** (1 / 3)))
+    print(f"k = {k}")
 
-max_buckets = cfg.get("max_buckets", k)
+    max_buckets = cfg.get("max_buckets", k)
 
-if platform not in budgets:
-    raise ValueError(f"Unknown platform '{platform}' in config")
-budget = tuple(budgets[platform]) 
+    if platform not in budgets:
+        raise ValueError(f"Unknown platform '{platform}' in config")
+    budget = tuple(budgets[platform]) 
 
-run_all(data_file, outputs_file, budget, max_buckets)
-compute_small_footprint_baseline_all(data_file, budget, max_buckets)
-compute_highest_accuracy_baselines_all(data_file, budget, max_buckets)
+    run_all(data_file, outputs_file, budget, max_buckets)
+    compute_small_footprint_baseline_all(data_file, budget, max_buckets)
+    compute_highest_accuracy_baselines_all(data_file, budget, max_buckets)
