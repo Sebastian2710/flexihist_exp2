@@ -1,7 +1,7 @@
 import os, csv
 import pandas as pd
 
-PARQUET     = "aapl_orders.parquet"
+PARQUET     = "aapl_book_events_regular.parquet"
 PRICE_COL   = "price"
 TIME_COL    = "timestamp_ns"          # <-- confirm this matches your parquet's actual column name
 N_WINDOWS   = 13                   # 13 x 30min = 6.5h = 9:30 -> 16:00 regular session
