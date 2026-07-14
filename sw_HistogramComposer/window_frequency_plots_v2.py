@@ -29,8 +29,9 @@ import matplotlib.ticker as ticker
 
 # ── Paths — edit if your layout differs ──────────────────────────────────────
 PARQUET      = r"C:\faculta\LICENTA\flexihist\sw_HistogramComposer\aapl_book_events_regular.parquet"
-OUT_DIR_SUB  = r"C:\faculta\LICENTA\flexihist\out\window_freq_plots_submitted"
-OUT_DIR_TRD  = r"C:\faculta\LICENTA\flexihist\out\window_freq_plots_traded"
+OUT_DIR_SUB  = r"C:\faculta\LICENTA\flexihist\sw_histogramcomposer\out\window_freq_plots_submitted"
+OUT_DIR_TRD  = r"C:\faculta\LICENTA\flexihist\sw_histogramcomposer\out\window_freq_plots_traded"
+OUT_DIR_TRD_SUPP = r"C:\faculta\LICENTA\flexihist\sw_histogramcomposer\out\window_freq_plots_traded_180_300"
 
 # ── Parameters (same as the original script) ─────────────────────────────────
 BIN_WIDTH      = 0.10
@@ -42,6 +43,7 @@ WINDOW_START_NS = 9 * 3_600_000_000_000 + 30 * NS_PER_MINUTE  # 09:30 ET
 
 os.makedirs(OUT_DIR_SUB, exist_ok=True)
 os.makedirs(OUT_DIR_TRD, exist_ok=True)
+os.makedirs(OUT_DIR_TRD_SUPP, exist_ok=True)
 
 
 def build_windows():
@@ -55,7 +57,7 @@ def build_windows():
     return windows
 
 
-def plot_windowed_histograms(df_subset, windows, weight_col, out_dir, subset_label):
+def plot_windowed_histograms(df_subset, windows, weight_col, out_dir, subset_label, xlim=None):
     """
     df_subset  : the rows to histogram (already filtered by event type)
     weight_col : None -> count rows; or a column name -> sum that column
@@ -104,7 +106,10 @@ def plot_windowed_histograms(df_subset, windows, weight_col, out_dir, subset_lab
         )
         ax.set_xlabel("Price (USD)", fontsize=12)
         ax.set_ylabel(ylabel, fontsize=12)
-        ax.set_xlim(p_lo, p_hi)
+        if xlim is not None:
+            ax.set_xlim(*xlim)
+        else:
+            ax.set_xlim(p_lo, p_hi)
         ax.set_ylim(0, max_count_seen * 1.05 if max_count_seen else 1)
         ax.xaxis.set_major_formatter(ticker.FormatStrFormatter("$%.2f"))
         ax.grid(True, alpha=0.3)
@@ -135,6 +140,10 @@ def main():
     exec_df = df[df["event"].isin(["EXECUTE", "EXECUTE_PRICE"])].copy()
     plot_windowed_histograms(exec_df, windows, weight_col="shares",
                               out_dir=OUT_DIR_TRD, subset_label="Traded Interest (Executed Volume)")
+    plot_windowed_histograms(exec_df, windows, weight_col="shares",
+                              out_dir=OUT_DIR_TRD_SUPP,
+                              subset_label="Traded Interest (Executed Volume, 180.3-300.0)",
+                              xlim=(180.3, 300.0))
 
     print("\nDone.")
 

@@ -20,7 +20,7 @@ PARQUET = r"C:\faculta\LICENTA\flexihist\sw_histogramcomposer\aapl_book_events_r
 OUT_DIR = r"C:\faculta\LICENTA\flexihist\sw_histogramcomposer\window_freq_plots"
 
 # ── Parameters ────────────────────────────────────────────────────────────────
-BIN_WIDTH      = 1   # $0.10 equi-width buckets (~10 ticks per bucket)
+BIN_WIDTH      = 0.10   # $0.10 equi-width buckets (~10 ticks per bucket)
 N_WINDOWS      = 13
 PRICE_DECIMALS = 2      # round prices to 2 decimals before binning/plotting
 
